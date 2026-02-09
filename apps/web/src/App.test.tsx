@@ -5,7 +5,7 @@ import { App } from './App'
 describe('App', () => {
   it('renders the header with title', () => {
     render(<App />)
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('The Hytel Way')
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Shapeshift')
   })
 
   it('renders the counter with initial value of 0', () => {
