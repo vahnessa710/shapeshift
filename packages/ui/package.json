@@ -24,8 +24,8 @@
     "tailwind-merge": "^2.6.0"
   },
   "devDependencies": {
-    "@repo/config": "workspace:*",
-    "@repo/eslint-config": "workspace:*",
+    "@shapeshift/config": "workspace:*",
+    "@shapeshift/eslint-config": "workspace:*",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
     "@types/react": "^18.3.14",

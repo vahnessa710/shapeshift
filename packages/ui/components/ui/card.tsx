@@ -16,7 +16,7 @@ import { cn } from '../../lib/utils'
  * - CardContent: The main content area
  * - CardFooter: Bottom section (for actions/buttons)
  *
- * This is part of @repo/ui - the "shared component closet"!
+ * This is part of @shapeshift/ui - the "shared component closet"!
  */
 
 const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(

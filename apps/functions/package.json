@@ -16,13 +16,13 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@repo/shared": "workspace:*",
+    "@shapeshift/shared": "workspace:*",
     "@trpc/server": "^11.0.0-rc.660",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@repo/config": "workspace:*",
-    "@repo/eslint-config": "workspace:*",
+    "@shapeshift/config": "workspace:*",
+    "@shapeshift/eslint-config": "workspace:*",
     "eslint": "^8.57.0",
     "typescript": "5.5.4",
     "vitest": "^2.1.8"

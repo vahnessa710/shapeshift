@@ -1,5 +1,5 @@
 // =============================================================================
-// @repo/ui - The Shared Component Closet
+// @shapeshift/ui - The Shared Component Closet
 // =============================================================================
 //
 // 🎭 ANALOGY: This is like a shared wardrobe in a theater production.

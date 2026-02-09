@@ -105,12 +105,12 @@ pnpm format
 
 ### Shared Components (`packages/ui`)
 
-Components in `@repo/ui` can be used by any app in the monorepo:
+Components in `@shapeshift/ui` can be used by any app in the monorepo:
 
 ```tsx
-import { Header } from '@repo/ui/Header'
-import { Button } from '@repo/ui/Button'
-import { Card, CardHeader, CardContent } from '@repo/ui/Card'
+import { Header } from '@shapeshift/ui/Header'
+import { Button } from '@shapeshift/ui/Button'
+import { Card, CardHeader, CardContent } from '@shapeshift/ui/Card'
 ```
 
 ### Type-Safe API (`apps/functions`)
@@ -134,7 +134,7 @@ const { mutate } = trpc.user.create.useMutation()
 Zod schemas shared between frontend and backend:
 
 ```tsx
-import { UserSchema, CreateUserSchema } from '@repo/shared'
+import { UserSchema, CreateUserSchema } from '@shapeshift/shared'
 
 // Type-safe validation everywhere!
 const user = UserSchema.parse(data)
@@ -253,9 +253,9 @@ pnpm test
 
 # Run tests for specific package
 pnpm --filter web test
-pnpm --filter @repo/ui test
-pnpm --filter @repo/shared test
-pnpm --filter @repo/functions test
+pnpm --filter @shapeshift/ui test
+pnpm --filter @shapeshift/shared test
+pnpm --filter @shapeshift/functions test
 
 # Run with coverage
 pnpm test:coverage

@@ -270,7 +270,7 @@ pnpm lint --fix
 pnpm exec turbo run typecheck
 
 # Check specific package
-pnpm --filter @repo/ui exec tsc --noEmit
+pnpm --filter @shapeshift/ui exec tsc --noEmit
 ```
 
 ### "Test failed"

@@ -28,12 +28,12 @@
  *    -> Tailwind: Utility classes for quick styling (fabric swatches)
  *    -> Shadcn UI: Pre-made, beautiful component patterns (costume templates)
  *
- * @repo/ui (Shared Component Package)
+ * @shapeshift/ui (Shared Component Package)
  *    -> "The shared costume closet"
  *    -> Components here (Header, Button, Card) can be used by ANY app!
  *    -> Located in: packages/ui/
  *
- * @repo/shared (Shared Types & Schemas)
+ * @shapeshift/shared (Shared Types & Schemas)
  *    -> "The spellbook of shared rules"
  *    -> Zod schemas define what data looks like (validation spells!)
  *    -> Located in: packages/shared/
@@ -49,10 +49,10 @@
 import { useState } from 'react'
 import './style.css'
 
-// Importing from @repo/ui - the "shared component closet"
+// Importing from @shapeshift/ui - the "shared component closet"
 // These components live in packages/ui/ and can be used by any app!
-import { Header } from '@repo/ui/Header'
-import { Button } from '@repo/ui/Button'
+import { Header } from '@shapeshift/ui/Header'
+import { Button } from '@shapeshift/ui/Button'
 import {
   Card,
   CardHeader,
@@ -60,7 +60,7 @@ import {
   CardDescription,
   CardContent,
   CardFooter,
-} from '@repo/ui/Card'
+} from '@shapeshift/ui/Card'
 
 // Assets
 import viteLogo from '/vite.svg'
@@ -79,7 +79,7 @@ export function App() {
   return (
     <div className="min-h-screen py-8 px-4">
       {/* 
-        Header Component from @repo/ui
+        Header Component from @shapeshift/ui
         This comes from our shared "costume closet" (packages/ui)
         Any app in the monorepo can use this same Header!
       */}

@@ -12,7 +12,7 @@ import { cn } from '../../lib/utils'
  * - variant: The "style" of the costume (default, destructive, outline, etc.)
  * - size: The "fit" of the costume (sm, default, lg, icon)
  *
- * This is part of @repo/ui - the "shared component closet" that all
+ * This is part of @shapeshift/ui - the "shared component closet" that all
  * apps in the monorepo can borrow from!
  */
 const buttonVariants = cva(

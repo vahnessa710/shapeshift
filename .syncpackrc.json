@@ -7,7 +7,7 @@
   "versionGroups": [
     {
       "label": "Ignore workspace protocol packages",
-      "dependencies": ["@repo/**"],
+      "dependencies": ["@shapeshift/**"],
       "isIgnored": true
     },
     {
