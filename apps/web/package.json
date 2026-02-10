@@ -12,6 +12,9 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@firebase/app": "^0.14.8",
+    "@firebase/auth": "^1.12.0",
+    "@firebase/firestore": "^4.11.0",
     "@shapeshift/functions": "workspace:*",
     "@shapeshift/shared": "workspace:*",
     "@shapeshift/ui": "workspace:*",
