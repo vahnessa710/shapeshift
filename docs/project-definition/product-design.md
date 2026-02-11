@@ -1,89 +1,79 @@
 # Product Design Document: Shapeshift
 
 **Project:** Collaborative SaaS Fitness Platform
-
 **Architecture:** Monorepo (Shared Types, API/Functions, Trainee App, Trainer Dashboard)
-
 **Stack:** Firebase (Auth, Firestore, Hosting, Functions)
-
 **Model:** Freemium SaaS
 
 ---
 
 ## 1. Product Overview
 
-**Shapeshift** is a collaborative fitness tracking ecosystem designed to connect casual trainees with professional trainers. Unlike standalone trackers, Shapeshift uses **real-time data synchronization** to allow trainers to monitor workouts, muscle fatigue, and nutrition as they happen. By integrating wearable data (Apple Watch), the platform provides a holistic view of a user's health, ensuring data-driven coaching and improved accountability.
+**Shapeshift** is a streamlined fitness ecosystem that bridges the gap between logging and coaching. It allows trainees to track their weight and workouts while granting trainers real-time, read-only access to their progress. The platform focuses on accountability through a secure "Invite Code" handshake, ensuring that data sharing is always user-consented and easy to manage.
 
 ---
 
 ## 2. Target Audience
 
-| Persona         | Role                     | Primary Need                                                                                     |
-| --------------- | ------------------------ | ------------------------------------------------------------------------------------------------ |
-| **The Trainee** | Casual/Intermediate user | Wants guided progress and a way to share workout/diet data with their trainer effortlessly.      |
-| **The Trainer** | Fitness Professional     | Wants to scale their business by managing multiple clients through a single real-time dashboard. |
+| Persona         | Role                 | Primary Need                                                                      |
+| --------------- | -------------------- | --------------------------------------------------------------------------------- |
+| **The Trainee** | Fitness Enthusiast   | Wants to track weight loss and gym progress while getting professional oversight. |
+| **The Trainer** | Fitness Professional | Wants a centralized hub to monitor client progress without manual data exports.   |
 
 ---
 
-## 3. Epics & User Stories
+## 3. Epics & User Stories (Finalized)
 
-### Epic 1: Unified Workout & Muscle Tracking
+### Epic 1: Identity & Access Management
 
-- **User Story 1:** As a trainee, I want to log my daily workouts (sets, reps, weight) so I can track my volume over time.
-- **User Story 2:** As a trainee, I want to tag specific muscle groups per exercise so I can visualize my weekly body workload.
-- **User Story 3:** As a trainee, I want to log rest days and mid-workout break durations to ensure I am recovering between sets.
-- **User Story 4:** As a trainee, I want to see a muscle "heat map" to identify under-trained areas.
+- **Authentication:** As a user (Trainee or Trainer), I want to authenticate via Google or Email so that my personal fitness data remains secure and accessible only to me.
+- **Onboarding/Role Selection:** As a first-time user, I want to select my role (Trainee or Trainer) during onboarding so that the application presents the correct dashboard and permissions.
 
-### Epic 2: The "Trainer Connect" Portal (Real-time)
+### Epic 2: Workout & Weight Tracking (Trainee)
 
-- **User Story 5:** As a trainer, I want to invite clients via a unique link so I can quickly onboard them to my dashboard.
-- **User Story 6:** As a trainer, I want my dashboard to update automatically when a client finishes a workout (via Firestore Listeners).
-- **User Story 7:** As a trainee, I want to manage data-sharing permissions so I can control exactly what my trainer sees.
-- **User Story 8:** As a trainer, I want to leave feedback/comments on a client’s workout log that they see instantly.
+- **Weight Logging:** As a trainee, I want to log my body weight daily so I can see a progress chart of my weight loss.
+- **Workout Logs:** As a trainee, I want to select a workout type (e.g., "Full Body") and log the sets, reps, and weight for exercises.
+- **Progress Visualization:** As a trainee, I want a calendar view to see which days I worked out and which days were rest days.
 
-### Epic 3: Nutritional Logging & Habits
+### Epic 3: Collaborative Coaching (Trainer RBAC)
 
-- **User Story 9:** As a trainee, I want to log daily meals and macros so my trainer can correlate my diet with my performance.
-- **User Story 10:** As a trainee, I want to track daily habits (e.g., water intake) to build a holistic health profile.
-
-### Epic 4: Wearable Integration & Analytics
-
-- **User Story 11:** As a user, I want to sync Apple Watch data (heart rate/calories) into my logs automatically.
-- **User Story 12:** As a trainee, I want an analytics dashboard to see how my heart rate correlates with workout intensity.
-
-### Epic 5: SaaS Monetization
-
-- **User Story 13:** As a free user, I want to use basic tracking, but I understand I must upgrade to link more than one trainer.
-- **User Story 14:** As a trainer, I want to pay a subscription to manage more than 3 clients.
+- **Invite System:** As a trainer, I want to generate a unique "Invite Code" so that I can securely link my account to specific trainees without manual email management.
+- **Granular Permissions:** As a trainee, I want to input a trainer's code to grant them **read-only** access to my logs, maintaining control over my health data.
+- **Trainer Dashboard:** As a trainer, I want a real-time dashboard of my connected trainees to monitor their recent weight entries and workout logs.
 
 ---
 
-## 4. Technical Architecture (Firebase & Monorepo)
+## 4. Technical Architecture
 
-Since this is a monorepo using Firebase, the architecture focuses on **Shared Logic** and **Serverless Events**:
-
-1. **`packages/shared`**: Contains TypeScript interfaces for `User`, `Workout`, and `Meal`. Both the Trainee mobile app and Trainer web dashboard import these to ensure data consistency.
-2. **Firebase Firestore**: Acts as the real-time database.
-
-- Trainee App writes to a `workouts` collection.
-- Trainer Dashboard uses `onSnapshot()` to listen for changes to that collection.
-
-3. **Firebase Auth**: Manages user roles via **Custom Claims** (e.g., `role: 'trainer'`).
-4. **Firebase Cloud Functions**: Handles heavy lifting like processing analytics or checking subscription status for the SaaS "Freemium" logic.
+1. **Firebase Auth:** Handles the "Email/Google" authentication. Upon role selection, a **Custom Claim** (e.g., `{ role: 'trainer' }`) is added to the user’s token to gate specific dashboard features.
+2. **Invite Logic:** A Cloud Function generates a short-lived, unique alphanumeric string stored in a `codes` collection, mapped to a `trainerId`.
+3. **Real-time Sync:** The Trainer Dashboard uses Firestore `onSnapshot()` listeners on the `workouts` and `weight_entries` collections of their linked trainees.
 
 ---
 
-## 5. Database Schema (Firestore NoSQL)
+## 5. Database Schema (Firestore)
 
 ### Collection: `users`
 
 ```typescript
 {
   uid: "string",
-  name: "string",
-  role: "trainee" | "trainer",
-  isPremium: boolean,
-  wearableId: "string" // e.g., Apple Watch ID
+  email: "string",
+  role: "trainee" | "trainer", // Defined during onboarding
+  trainerCode: "string",       // Only for Trainers
+  connectedTrainerId: "string" // Only for Trainees
+}
+
+```
+
+### Collection: `weight_entries`
+
+```typescript
+{
+  traineeId: "string",
+  weight: number,
+  unit: "kg" | "lbs",
+  timestamp: Timestamp
 }
 
 ```
@@ -92,43 +82,29 @@ Since this is a monorepo using Firebase, the architecture focuses on **Shared Lo
 
 ```typescript
 {
-  traineeId: "string", // Foreign Key to users
-  timestamp: Timestamp,
-  exercises: [
-    { name: "Bench Press", sets: 3, reps: 10, weight: 135, muscleGroup: "Chest" }
-  ],
-  breakDurationTotal: number, // in seconds
-  trainerFeedback: "string"
-}
-
-```
-
-### Collection: `connections`
-
-```typescript
-{
-  trainerId: "string",
   traineeId: "string",
-  status: "pending" | "active",
-  connectedAt: Timestamp
+  workoutType: "Full Body" | "Push" | "Pull" | "Legs",
+  exercises: [
+    { name: "Squat", sets: 3, reps: 10, weight: 100 }
+  ],
+  timestamp: Timestamp
 }
 
 ```
 
 ---
 
-## 6. Success Metrics (KPIs)
+## 6. Security & Constraints
 
-- **Engagement:** Percentage of trainees logging 3+ workouts per week.
-- **Collaboration:** Average number of trainer comments per client workout.
-- **Revenue:** Conversion rate of Trainers from "Free" (3 clients) to "Pro" (Unlimited).
-- **Sync Rate:** Percentage of users who successfully link an Apple Watch.
+- **Read-Only RBAC:** Firestore Security Rules ensure that while a Trainer can _read_ a trainee's data (if the `trainee.connectedTrainerId` matches the `trainer.uid`), they are strictly forbidden from _writing_ or _editing_ the trainee's logs.
+- **Data Isolation:** Trainees cannot see other trainees' data, even if they share the same trainer.
 
 ---
 
-## 7. Security & Constraints
+## 7. Success Metrics (KPIs)
 
-- **Firestore Security Rules:** Must be configured so that a Trainer can _only_ read data for Trainees listed in their `connections` collection.
-- **Offline Persistence:** Use Firebase's local cache so trainees can log workouts in gyms with no cellular service; data will sync once back online.
+- **Onboarding Completion:** Percentage of users who successfully select a role and complete their first log.
+- **Connection Rate:** Average time it takes for a trainee to link to a trainer after account creation.
+- **Retention:** Weekly active users (WAU) logging either weight or a workout.
 
 ---
