@@ -8,4 +8,18 @@ export default defineConfig({
     globals: true,
     setupFiles: './src/test/setup.ts',
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('recharts')) {
+              return 'vendor-recharts'
+            }
+            return 'vendor'
+          }
+        },
+      },
+    },
+  },
 })
