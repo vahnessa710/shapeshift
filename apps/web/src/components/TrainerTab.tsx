@@ -51,8 +51,19 @@ export const TrainerTab = ({
       setSuccess(`Successfully connected to Trainer: ${trainer.name}!`)
       setTrainerCode('')
       await onTrainerUpdated()
-    } catch (err: string) {
-      setError(err.message || 'Failed to connect to trainer')
+    } catch (err) {
+      // 1. Check if it's an Error object (like FirebaseError or standard Error)
+      if (err instanceof Error) {
+        setError(err.message)
+      }
+      // 2. Check if it's a raw string (if your lib actually throws strings)
+      else if (typeof err === 'string') {
+        setError(err)
+      }
+      // 3. Fallback for everything else
+      else {
+        setError('Failed to connect to trainer')
+      }
     } finally {
       setLoading(false)
     }
