@@ -1,71 +1,57 @@
-# ⚡ Shapeshift Development Backlog
+# 📝 Shapeshift Project Task List
 
-## 🟢 Phase 1: Foundation & Shared Logic
+## 🏗️ Phase 1: Foundation & Monorepo Setup
 
-_Focus: Setting up the "Script" (Schemas) and "Stage" (UI Theme)_
+- [x] Initialize Monorepo structure (Shared Types, API/Functions, Apps).
+- [x] Initialize Firebase project (Auth, Firestore, Hosting, Functions).
+- [x] Define shared TypeScript interfaces based on PDD schema (`User`, `WeightLog`, `Workout`).
+- [x] Configure Firestore Security Rules (Basic ownership rules).
 
-- [ ] **Infrastructure Setup**
-  - [ ] Initialize Firebase Project (Auth & Firestore)
-  - [ ] Configure Environment Variables (`apps/web/.env` and `apps/functions/.env`)
-  - [ ] Run `pnpm install` and verify `pnpm precheck` passes
-- [ ] **Shared Schemas (`packages/shared`)**
-  - [ ] Define `UserSchema` (id, role: trainee/trainer, isPremium)
-  - [ ] Define `WorkoutSchema` (traineeId, exercises, muscleGroups, timestamp)
-  - [ ] Define `ConnectionSchema` (trainerId, traineeId, status)
-- [ ] **Design System (`packages/ui`)**
-  - [ ] Customize `tailwind.config.ts` with Shapeshift brand colors
-  - [ ] Initialize Shadcn components: `Button`, `Card`, `Input`, `Badge`, `Tabs`
+## 🔐 Phase 2: Identity & Access Management (Epic 1)
 
-## 🟡 Phase 2: Auth & API Gateway
+- [x] Implement Firebase Auth (Google & Email/Password) in the Shared layer.
+- [x] **Onboarding Flow:** Create role selection screen (Trainee vs. Trainer).
+- [x] Create `users` collection entry on first sign-in.
 
-_Focus: Connecting the Messenger (tRPC) and checking IDs (Zod)_
+## ⚖️ Phase 3: Trainee Core Features (Epic 2)
 
-- [ ] **tRPC Backend (`apps/functions`)**
-  - [ ] Create `authRouter`: Handle user onboarding and role assignment
-  - [ ] Implement `context.ts`: Extract Firebase Auth token from headers
-  - [ ] Create `protectedProcedure` middleware for authenticated routes
-- [ ] **Frontend Auth (`apps/web`)**
-  - [ ] Implement Login/Sign-up pages using Firebase Auth
-  - [ ] Create `RoleGate` component to redirect users based on `trainee` or `trainer` role
+- [ ] **Weight Logging:**
+- [x] Build weight input form (Value + Unit toggle).
+- [x] Create weight history list/chart view.
 
-## 🟠 Phase 3: Trainee Core (Epic 1)
+- [ ] **Workout Logging:**
+- [x] Build workout logger (Select type -> Add exercises -> Input Sets/Reps/Weight).
+- [x] Implement Firestore write logic for `workoutsLogs` collection.
 
-_Focus: The workout logging engine_
+- [ ] **Dashboard:**
+- [x] Implement Calendar view to visualize activity streaks (Workout vs. Rest days).
 
-- [ ] **Workout API**
-  - [ ] `workout.create` mutation: Save workout data to Firestore
-  - [ ] `workout.getHistory` query: Fetch previous logs for the trainee
-- [ ] **Trainee UI**
-  - [ ] Build "Log Workout" form using `react-hook-form` + `@repo/shared` schemas
-  - [ ] Implement muscle group selector (Multi-select)
-  - [ ] Create "Muscle Heat Map" visualization component
+## 🤝 Phase 4: Collaborative Logic (Epic 3 Part A)
 
-## 🔵 Phase 4: Trainer Portal & Connections (Epic 2)
+- [ ] **Invite System:**
+- [x] Logic for Trainers to generate/refresh a unique 6-digit Invite Code.
+- [x] Function to map `inviteCode` to `trainerId` in a `users` collection.
 
-_Focus: Real-time collaboration_
+- [ ] **Handshake Logic:**
+- [x] Trainee "Join Trainer" input field.
+- [x] Backend validation: Match code -> Update `user.TrainerId` user.role = 'trainee' and `user.inviteCode` user.role = 'trainer'.
 
-- [ ] **Connection Logic**
-  - [ ] `connection.invite`: Generate unique link/code for trainees
-  - [ ] `connection.getClients`: Query to list all active trainees for a trainer
-- [ ] **Trainer Dashboard**
-  - [ ] Build "Client Overview" grid using `@repo/ui/Card`
-  - [ ] Implement real-time "Activity Feed" using TanStack Query's subscription/refetch logic
-  - [ ] Add "Feedback" mutation to allow trainers to comment on workouts
+## 📊 Phase 5: Trainer Experience (Epic 3 Part B)
 
-## 🔴 Phase 5: SaaS & Analytics (Epics 4 & 5)
+- [ ] **Trainer Dashboard:**
+- [ ] Implement `onSnapshot()` listener to fetch all connected trainees.
+- [ ] Create "Client Overview" list showing latest weight/workout activity.
 
-_Focus: Monetization and data optimization_
+- [ ] **Client Detail View:**
+- [x] Build **Read-Only** view for a specific trainee's weight charts and workout logs.
 
-- [ ] **SaaS Logic**
-  - [ ] Create `premiumMiddleware` in tRPC to check connection limits (Max 3 for free)
-  - [ ] Integration: Set up Stripe webhook listener in Cloud Functions
-- [ ] **Wearable Sync**
-  - [ ] Research and implement Apple HealthKit bridge for data normalization
+- [ ] **Security Hardening:**
+- [ ] Finalize Firestore Rules: Allow read access to trainers only if `trainee.trainerId == trainer.inviteCode`.
+
+## 🚀 Phase 6: Polish & Launch
+
+- [ ] **UX/UI:** Add loading states and empty state illustrations.
+- [ ] **KPI Tracking:** Integrate basic analytics for onboarding completion and connection rates.
+- [ ] **Deployment:** Deploy Firebase Functions and Hosting for both Trainee and Trainer apps.
 
 ---
-
-## ✅ Completed Tasks
-
-- [x] Finalize Product Design Document (`docs/product-design.md`)
-- [x] Finalize Technical Design Document (`docs/technical-design.md`)
-- [x] Choose Monorepo Naming Conventions
