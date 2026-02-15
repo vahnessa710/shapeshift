@@ -1,60 +1,54 @@
-import { describe, it, expect } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { describe, it, expect, vi } from 'vitest'
+import { render, screen } from '@testing-library/react'
 import { App } from './App'
 
-describe('App', () => {
-  it('renders the header with title', () => {
+vi.mock('./pages/Login', () => ({
+  LoginPage: () => <div data-testid="login">Login Page Content</div>,
+}))
+vi.mock('./pages/Onboarding', () => ({
+  OnboardingPage: () => <div data-testid="onboarding">Onboarding Page Content</div>,
+}))
+vi.mock('./pages/TraineeDashboard', () => ({
+  TraineeDashboard: () => <div data-testid="trainee-dash">Trainee Dashboard</div>,
+}))
+vi.mock('./pages/TrainerDashboard', () => ({
+  TrainerDashboard: () => <div data-testid="trainer-dash">Trainer Dashboard Content</div>,
+}))
+
+vi.mock('./components/AuthGuard', () => ({
+  AuthGuard: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}))
+
+describe('App Component Routing', () => {
+  it('renders the Login page by default (redirect from /)', async () => {
     render(<App />)
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Shapeshift')
+
+    const loginPage = await screen.findByTestId('login')
+    expect(loginPage).toBeInTheDocument()
   })
 
-  it('renders the counter with initial value of 0', () => {
+  it('renders the Onboarding page when navigating to /onboarding', async () => {
+    window.history.pushState({}, 'Onboarding', '/onboarding')
+
     render(<App />)
-    expect(screen.getByText('0')).toBeInTheDocument()
+    const onboardingPage = await screen.findByTestId('onboarding')
+    expect(onboardingPage).toBeInTheDocument()
   })
 
-  it('increments the counter when clicking increase button', () => {
+  it('renders the Trainee Dashboard when navigating to its path', async () => {
+    window.history.pushState({}, 'Trainee', '/trainee/dashboard')
+
     render(<App />)
-    const increaseButton = screen.getByRole('button', { name: /increment counter/i })
-    fireEvent.click(increaseButton)
-    expect(screen.getByText('1')).toBeInTheDocument()
+
+    const traineeDashboard = await screen.findByTestId('trainee-dash')
+    expect(traineeDashboard).toBeInTheDocument()
   })
 
-  it('decrements the counter when clicking decrease button', () => {
+  it('renders the Trainer Dashboard when navigating to its path', async () => {
+    window.history.pushState({}, 'Trainer', '/trainer/dashboard')
+
     render(<App />)
-    const decreaseButton = screen.getByRole('button', { name: /decrement counter/i })
-    fireEvent.click(decreaseButton)
-    expect(screen.getByText('-1')).toBeInTheDocument()
-  })
-
-  it('resets counter to zero when clicking reset button', () => {
-    render(<App />)
-    const increaseButton = screen.getByRole('button', { name: /increment counter/i })
-    const resetButton = screen.getByRole('button', { name: /reset/i })
-
-    // Increment a few times
-    fireEvent.click(increaseButton)
-    fireEvent.click(increaseButton)
-    expect(screen.getByText('2')).toBeInTheDocument()
-
-    // Reset
-    fireEvent.click(resetButton)
-    expect(screen.getByText('0')).toBeInTheDocument()
-  })
-
-  it('renders the stack overview card', () => {
-    render(<App />)
-    expect(screen.getByText('Stack Overview', { exact: false })).toBeInTheDocument()
-  })
-
-  it('renders the monorepo structure card', () => {
-    render(<App />)
-    expect(screen.getByText('Monorepo Structure', { exact: false })).toBeInTheDocument()
-  })
-
-  it('renders Vite and React logos', () => {
-    render(<App />)
-    expect(screen.getByAltText('Vite logo')).toBeInTheDocument()
-    expect(screen.getByAltText('React logo')).toBeInTheDocument()
+    const trainerDashboard = await screen.findByTestId('trainer-dash')
+    expect(trainerDashboard).toBeInTheDocument()
   })
 })
