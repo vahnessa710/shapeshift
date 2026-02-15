@@ -10,6 +10,7 @@ export const userRouter = router({
       id: 'dummy-id',
       email: input.email,
       name: input.name,
+      role: input.role,
     })),
 
   getById: publicProcedure
@@ -19,10 +20,11 @@ export const userRouter = router({
       id: input,
       email: 'test@example.com',
       name: 'Test User',
+      role: 'TRAINEE',
     })),
 
   list: publicProcedure.output(z.array(UserSchema)).query(() => [
-    { id: 'user-1', email: 'user1@example.com', name: 'User One' },
-    { id: 'user-2', email: 'user2@example.com', name: 'User Two' },
+    { id: 'user-1', email: 'user1@example.com', name: 'User One', role: 'TRAINEE' as const },
+    { id: 'user-2', email: 'user2@example.com', name: 'User Two', role: 'TRAINER' as const },
   ]),
 })
